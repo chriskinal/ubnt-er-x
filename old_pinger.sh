@@ -7,9 +7,15 @@ targets=(
    '8.8.8.8'        
    '8.8.4.4' 
    ) 
-# add max latency here
-maxlat=300
-maxjit=30
+# latency check (true|false)
+latcheck=true
+# Jitter check (true|false)
+jitcheck=true
+# If strictcheck=true then latency and jitter must be over max before failing
+strictcheck=true 
+# add max latency/jitter here
+maxlat=200
+maxjit=20
 
 [ $# != 3 ] && echo "Usages: $0 <group> <intf> <status>" exit 1
 group=$1
@@ -20,8 +26,7 @@ for host in "${targets[@]}"
 do
 
 pings () {
-#/bin/ping -n -c 4 -W 1 -w 1 -i 0.2 -I $2 $1 | tail -1 | awk -F '/' '{print $5 "-" $7}'
-/sbin/ping -n -c 4 -W 1 -t 1 -i 0.2 -S $2 $1 | tail -1 | awk -F '/' '{print $5 "-" $7}'
+/bin/ping -n -c 4 -W 1 -w 1 -i 0.2 -I $2 $1 | tail -1 | awk -F '/' '{print $5 "-" $7}'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
 return 1
 fi
@@ -33,24 +38,19 @@ jitter=$(echo $results | cut -f2 -d-)
 striplat=$(echo ${latency%.*})
 stripjit=$(echo ${jitter%.*})
 echo $striplat
-echo $maxlat
 echo $stripjit
-echo $maxjit
-
 
 if [[ ! -z "$striplat" ]] && [[ ! -z "$stripjit" ]]; then
 #begin check latency/jitter
-echo "Begin check"
-
-if [[ $striplat -lt $maxlat ]]; then
-echo "Less Than"
-exit 0
-else
-echo "Greater Than"
-exit 1
-fi
+echo begin check
+[[ $latcheck = "true" && $jitcheck = "false" && $striplat -gt $maxlat ]] && continue
+[[ $latcheck = "false" && $jitcheck = "true" && $stripjit -gt $maxjit ]] && continue
+[[ $latcheck = "true" && $jitcheck = "true" && ($striplat -gt $maxlat || $stripjit -gt $maxjit) ]] && continue
+[[ $strictcheck = "true" && ($striplat -gt $maxlat && $stripjit -gt $maxjit) ]] && continue
 echo "end check"
 #end check latency/jitter
+exit 0
+
 else
 
 exit 1
