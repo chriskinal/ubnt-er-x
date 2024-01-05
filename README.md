@@ -12,20 +12,31 @@ show
 use the vi window to find load-balance
 
 In this example, group=wan_failover, interface=eth2
+
 We have to change how the “route-test” works to instead use our script, and we have to commit and save it
 configure
-edit load-balance group <name> interface <name> route-test
-set type script /config/scripts/pinger.sh
-top
-commit
-save
-exit
+
+1. edit load-balance group <name> interface <name> route-test
+2. set type script /config/scripts/pinger.sh
+3. top
+4. commit
+5. save
+6. exit
+
 In our example configure
+
 edit load-balance group wan_failover interface eth2 route-test
+
 set type script /config/scripts/pinger.sh
+
 top
+
 commit
+
 save
+
 exit
+
 There is a chance after updates this script will be lost and will need to be added again
+
 To test if it’s working use show load-balance watchdog
