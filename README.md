@@ -1,4 +1,5 @@
 Preserving instructions from https://community.ui.com/questions/WAN-load-balance-script-option/07b7b656-9f48-4708-bb2f-69cb8d2de702#answer/113836c7-4f17-40c4-8af0-83dc085242b7
+
 copy code into sudo vi /config/scripts/pinger.sh
 
 sudo chmod +x /config/scripts/pinger
