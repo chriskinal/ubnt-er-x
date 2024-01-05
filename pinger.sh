@@ -1,6 +1,7 @@
 #!/bin/bash
 # originial script by @ubnt-stig from community.ubnt.com
-# This is my attempt to optimize it.
+# Optimized script by smyers119
+# Changed ot latency only by chriskinal
 # add your ping targets here 
 targets=( 
    '1.1.1.1'        
@@ -32,25 +33,25 @@ latency=$(echo $results | cut -f1 -d-)
 jitter=$(echo $results | cut -f2 -d-)
 striplat=$(echo ${latency%.*})
 stripjit=$(echo ${jitter%.*})
-echo $striplat
-echo $maxlat
-echo $stripjit
-echo $maxjit
+#echo $striplat
+#echo $maxlat
+#echo $stripjit
+#echo $maxjit
 
 
 if [[ ! -z "$striplat" ]] && [[ ! -z "$stripjit" ]]; then
-#begin check latency/jitter
-echo "Begin check"
+#begin check latency
+#echo "Begin check"
 
 if [[ $striplat -lt $maxlat ]]; then
-echo "Less Than"
+#echo "Less Than"
 exit 0
 else
-echo "Greater Than"
+#echo "Greater Than"
 exit 1
 fi
-echo "end check"
-#end check latency/jitter
+#echo "end check"
+#end check latency
 else
 
 exit 1
